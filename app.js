@@ -1,13 +1,16 @@
 const express = require('express')
 const bodyParser = require('body-parser')
-const connectdb = require('./db/mongodb')
-
+const connectdb = require('./config/mongodb')
+const passport = require('passport')
 
 //Routes
+const authRoute = require('./routes/auth.routes')
 const postRoute = require('./routes/posts.routes')
 const userRoute = require('./routes/users.routes')
 
 require('dotenv').config()
+require('./middlewares/auth') // Signup and login authentication middleware
+require('./config/passport')
 
 const app = express()
 const port = process.env.port
@@ -17,8 +20,9 @@ connectdb()
 
 app.use(bodyParser.json())
 
+app.use('/', authRoute)
 app.use('/api/v1/posts', postRoute)
-app.use('/api/v1/users', userRoute)
+app.use('/api/v1/users', passport.authenticate('jwt', { session: false }), userRoute)
 
 app.get('/', (req, res) => {
     res.send('Hello!')

@@ -2,14 +2,14 @@ const moogoose = require('mongoose')
 const bcrypt = require('bcryptjs')
 
 const schema = new moogoose.Schema({
-    first_name: {
-        type: String,
-        required: true
-    },
-    last_name: {
-        type: String,
-        required: true
-    },
+    // first_name: {
+    //     type: String,
+    //     required: true
+    // },
+    // last_name: {
+    //     type: String,
+    //     required: true
+    // },
     email: {
         type: String,
         unique: true,

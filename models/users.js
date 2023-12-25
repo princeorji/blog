@@ -5,7 +5,9 @@ const schema = new moogoose.Schema({
     first_name: String,
     last_name: String,
     email: String,
-    password: String
+    password: String,
+    posts: Array,
+    post_count: { type: Number, default: 0 }
 })
 
 schema.pre('save', async function (next) {

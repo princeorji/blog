@@ -1,51 +1,62 @@
 const Users = require('../models/users')
 
-function getUsers(req, res) {
-    Users.find()
-        .then(users => {
-            res.send(users)
-        })
-        .catch(err => {
-            console.log(err)
-            res.send(err)
-        })
+const getUsers = async (req, res) => {
+    try {
+        const users = await Users.find()
+        res.status(200).send(users)
+    } catch (error) {
+        console.error(error)
+        res.status(500).json({ error: 'Internal Server Error' })
+    }
 }
 
-function getUser(req, res) {
-    const id = req.params.id
-    Users.findById(id)
-        .then(user => {
-            res.status(200).send(user)
-        })
-        .catch(err => {
-            console.log(err)
-            res.status(404).send(err)
-        })
+const getUser = async (req, res) => {
+    try {
+        const user = await Users.findById(req.params.id)
+
+        if (!user) {
+            res.status(404).json({ error: 'User not found' })
+        }
+
+    } catch (error) {
+        console.error(error)
+        res.status(500).json({ error: 'Internal Server Error' })
+    }
 }
 
-function updateUser(req, res) {
-    const id = req.params.id
-    const user = req.body
-    Users.findByIdAndUpdate(id, user, { new: true })
-        .then(user => {
-            res.status(201).send(user)
-        })
-        .catch(err => {
-            console.log(err)
-            res.status(500).send(err)
-        })
+const updateUser = async (req, res) => {
+    try {
+        const user = req.body
+        const query = await Users.findByIdAndUpdate(req.params.id, user, { new: true })
+
+        if (!query) {
+            res.status(404).json({ error: 'User not found' })
+        } else {
+            console.log('User created successfully')
+            res.status(200).json(query)
+        }
+
+    } catch (error) {
+        console.error(error)
+        res.status(500).json({ error: 'Internal Server Error' })
+    }
 }
 
-function deleteUser(req, res) {
-    const id = req.params.id
-    Users.findByIdAndDelete(id)
-        .then(user => {
-            res.status(201).send(user)
-        })
-        .catch(err => {
-            console.log(err)
-            res.status(500).send(err)
-        })
+const deleteUser = async (req, res) => {
+    try {
+        const user = await Users.findByIdAndDelete(req.params.id)
+
+        if (!user) {
+            res.status(404).json({ error: 'User not found' })
+        } else {
+            console.log('User deleted successfully')
+            res.status(200).json({ message: 'User deleted successfully' })
+        }
+
+    } catch (error) {
+        console.error(error)
+        res.status(500).json({ error: 'Internal Server Error' })
+    }
 }
 
 module.exports = {

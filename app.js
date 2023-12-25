@@ -32,7 +32,7 @@ app.get('/', (req, res) => {
 app.use((err, req, res, next) => {
     console.log(err)
     const errorStatus = err.status || 500
-    res.status(errorStatus).send(err.message)
+    res.status(errorStatus).json({ error: 'Internal Server Error' })
     next()
 })
 

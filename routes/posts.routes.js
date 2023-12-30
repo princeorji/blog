@@ -15,4 +15,6 @@ routes.put('/:id', passport.authenticate('jwt', { session: false }), postValidat
 
 routes.delete('/:id', passport.authenticate('jwt', { session: false }), controller.deletePost)
 
+routes.post('/search', controller.searchPosts)
+
 module.exports = routes

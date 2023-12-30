@@ -3,8 +3,24 @@ const Users = require('../models/users')
 
 const getPosts = async (req, res) => {
     try {
-        const posts = await Posts.find()
-        res.status(200).send(posts)
+        const page = parseInt(req.query.page) || 1
+        const limit = parseInt(req.query.limit) || 10
+        const order_by = req.query.order_by || 'asc'
+
+        const skip = (page - 1) * limit
+
+        const posts = await Posts.find({ state: 'published' })
+            .skip(skip)
+            .limit(limit)
+            .sort({ read_count: order_by, timestamp: order_by })
+            .exec()
+
+        res.status(200).json({
+            posts,
+            page,
+            limit
+        })
+
     } catch (error) {
         console.error(error)
         res.status(500).json({ error: 'Internal Server Error' })
@@ -13,7 +29,7 @@ const getPosts = async (req, res) => {
 
 const getPost = async (req, res) => {
     try {
-        const post = await Posts.findById(req.params.id)
+        const post = await Posts.findById({ id: req.params.id, state: 'published' })
 
         if (!post) {
             res.status(404).json({ error: 'Post not found' })
@@ -56,15 +72,20 @@ const addPost = async (req, res) => {
 
 const updatePost = async (req, res) => {
     try {
-        const post = req.body
-        const query = await Posts.findByIdAndUpdate(req.params.id, post, { new: true })
+        const post = await Posts.findByIdAndUpdate(req.params.id, req.body, { new: true })
 
-        if (!query) {
+        if (!post) {
             res.status(404).json({ error: 'Post not found' })
-        } else {
-            console.log('Post created successfully')
-            res.status(200).json(query)
+            return
         }
+
+        if (req.user._id.toString() !== post.author._id.toString()) {
+            res.status(401).json({ error: 'Unauthorized' })
+            return
+        }
+
+        console.log('Post updated successfully')
+        res.status(200).json(post)
 
     } catch (error) {
         console.error(error)
@@ -78,6 +99,12 @@ const deletePost = async (req, res) => {
 
         if (!post) {
             res.status(404).json({ error: 'Post not found' })
+            return
+        }
+
+        if (req.user._id.toString() !== post.author._id.toString()) {
+            res.status(401).json({ error: 'Unauthorized' })
+            return
         }
 
         // Decrement the post_count in the user model and pull the deleted post
@@ -98,10 +125,36 @@ const deletePost = async (req, res) => {
     }
 }
 
+const searchPosts = async (req, res) => {
+    try {
+        const searchTerm = req.query.q
+
+        if (!searchTerm) {
+            res.status(400).json({ error: 'Please provide a search term' })
+            return
+        }
+
+        const posts = await Posts.find({
+            $or: [
+                { title: { $regex: searchTerm, $options: 'i' } },
+                // { 'author.first_name': { $regex: searchTerm, $options: 'i' } },
+                { tags: { $in: [new RegExp(searchTerm, 'i')] } }
+            ]
+        })
+
+        res.status(200).json(posts)
+
+    } catch (error) {
+        console.error(error)
+        res.status(500).json({ error: 'Internal Server Error' })
+    }
+}
+
 module.exports = {
     getPosts,
     getPost,
     addPost,
     updatePost,
-    deletePost
+    deletePost,
+    searchPosts
 }

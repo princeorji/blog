@@ -15,4 +15,6 @@ const schema = new mongoose.Schema({
     body: String
 })
 
+schema.index({ title: 'text', 'author.first_name': 'text', tags: 'text' })
+
 module.exports = mongoose.model('Posts', schema)

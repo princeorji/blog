@@ -4,12 +4,15 @@ const Users = require('../models/users')
 const getPosts = async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 1
-        const limit = parseInt(req.query.limit) || 10
+        const limit = parseInt(req.query.limit) || 20
         const order_by = req.query.order_by || 'asc'
 
         const skip = (page - 1) * limit
 
-        const posts = await Posts.find({ state: 'published' })
+        const posts = await Posts.find({ state: 'published' }).populate({
+            path: 'author',
+            select: 'email post_count'
+        })
             .skip(skip)
             .limit(limit)
             .sort({ read_count: order_by, timestamp: order_by })
@@ -29,7 +32,11 @@ const getPosts = async (req, res) => {
 
 const getPost = async (req, res) => {
     try {
-        const post = await Posts.findById({ id: req.params.id, state: 'published' })
+        const post = await Posts.findById({ _id: req.params.id, state: 'published' })
+            .populate({
+                path: 'author',
+                select: 'email post_count'
+            })
 
         if (!post) {
             res.status(404).json({ error: 'Post not found' })
@@ -54,10 +61,10 @@ const addPost = async (req, res) => {
         })
         await post.save()
 
-        // Increment the user's post_count in the user model and push the new post
+        // Increment the user's post_count in the user model 
         await Users.findByIdAndUpdate(
             post.author,
-            { $inc: { post_count: 1 }, $push: { posts: post._id } },
+            { $inc: { post_count: 1 } },
             { new: true }
         )
 
@@ -107,11 +114,11 @@ const deletePost = async (req, res) => {
             return
         }
 
-        // Decrement the post_count in the user model and pull the deleted post
+        // Decrement the post_count in the user model 
         if (post.author) {
             await Users.findByIdAndUpdate(
                 post.author,
-                { $inc: { post_count: -1 }, $pull: { posts: post } },
+                { $inc: { post_count: -1 } },
                 { new: true }
             )
         }

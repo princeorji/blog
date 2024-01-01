@@ -38,9 +38,6 @@ const updateUser = async (req, res) => {
 
         if (req.user._id.toString() !== user._id.toString()) {
             res.status(401).json({ error: 'Unauthorized' })
-            console.log(user._id)
-            console.log(req.user._id)
-
             return
         }
 
@@ -76,9 +73,56 @@ const deleteUser = async (req, res) => {
     }
 }
 
+const userProfile = async (req, res) => {
+    try {
+        const id = req.params.id
+        const filter = req.query.q
+
+        const user = await Users.findById(id).populate({
+            path: 'posts',
+            match: filter ? { state: filter } : undefined
+        })
+
+        const posts = user.posts
+            .map((post) => ({
+                _id: post._id,
+                title: post.title,
+                description: post.description,
+                tags: post.tags,
+                state: post.state,
+                body: post.body
+            }))
+
+        if (!user) {
+            res.status(404).json({ error: 'User not found' })
+            return
+        }
+
+        if (req.user._id.toString() !== user._id.toString()) {
+            res.status(401).json({ error: 'Unauthorized' })
+            return
+        }
+
+        res.status(200).json({
+            user: {
+                first_name: user.first_name,
+                last_name: user.last_name,
+                email: user.email,
+                post_count: user.post_count,
+                posts: posts
+            },
+        })
+
+    } catch (error) {
+        console.error(error)
+        res.status(500).json({ error: 'Internal Server Error' })
+    }
+}
+
 module.exports = {
     getUsers,
     getUser,
     updateUser,
-    deleteUser
+    deleteUser,
+    userProfile
 }

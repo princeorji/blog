@@ -17,7 +17,7 @@ const postSchema = Joi.object({
     state: Joi.string()
         .valid('published', 'draft')
         .default('draft')
-        .optional(),
+        .required(),
     body: Joi.string()
         .min(20)
         .required()

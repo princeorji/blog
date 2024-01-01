@@ -12,4 +12,6 @@ routes.put('/:id', userValidator, controller.updateUser)
 
 routes.delete('/:id', controller.deleteUser)
 
+routes.get('/profile/:id', controller.userProfile)
+
 module.exports = routes

@@ -6,8 +6,13 @@ const schema = new moogoose.Schema({
     last_name: String,
     email: String,
     password: String,
-    posts: Array,
     post_count: { type: Number, default: 0 }
+})
+
+schema.virtual('posts', {
+    ref: 'Posts',
+    localField: '_id',
+    foreignField: 'author'
 })
 
 schema.pre('save', async function (next) {

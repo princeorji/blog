@@ -1,3 +1,4 @@
+const logger = require('../config/logger')
 const Users = require('../models/users')
 
 const getUsers = async (req, res) => {
@@ -5,7 +6,7 @@ const getUsers = async (req, res) => {
         const users = await Users.find()
         res.status(200).send(users)
     } catch (error) {
-        console.error(error)
+        logger.error(error)
         res.status(500).json({ error: 'Internal Server Error' })
     }
 }
@@ -22,7 +23,7 @@ const getUser = async (req, res) => {
         res.status(200).json(user)
 
     } catch (error) {
-        console.error(error)
+        logger.error(error)
         res.status(500).json({ error: 'Internal Server Error' })
     }
 }
@@ -41,11 +42,11 @@ const updateUser = async (req, res) => {
             return
         }
 
-        console.log('User created successfully')
+        logger.info('User created successfully')
         res.status(200).json(user)
 
     } catch (error) {
-        console.error(error)
+        logger.error(error)
         res.status(500).json({ error: 'Internal Server Error' })
     }
 }
@@ -64,11 +65,11 @@ const deleteUser = async (req, res) => {
             return
         }
 
-        console.log('User deleted successfully')
+        logger.info('User deleted successfully')
         res.status(200).json({ message: 'User deleted successfully' })
 
     } catch (error) {
-        console.error(error)
+        logger.error(error)
         res.status(500).json({ error: 'Internal Server Error' })
     }
 }
@@ -114,7 +115,7 @@ const userProfile = async (req, res) => {
         })
 
     } catch (error) {
-        console.error(error)
+        logger.error(error)
         res.status(500).json({ error: 'Internal Server Error' })
     }
 }

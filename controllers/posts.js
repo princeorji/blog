@@ -1,3 +1,4 @@
+const logger = require('../config/logger')
 const Posts = require('../models/posts')
 const Users = require('../models/users')
 
@@ -25,7 +26,7 @@ const getPosts = async (req, res) => {
         })
 
     } catch (error) {
-        console.error(error)
+        logger.error(error)
         res.status(500).json({ error: 'Internal Server Error' })
     }
 }
@@ -47,7 +48,7 @@ const getPost = async (req, res) => {
         }
 
     } catch (error) {
-        console.error(error)
+        logger.error(error)
         res.status(500).json({ error: 'Internal Server Error' })
     }
 }
@@ -68,11 +69,11 @@ const addPost = async (req, res) => {
             { new: true }
         )
 
-        console.log('Post created successfully')
+        logger.info('Post created successfully')
         res.status(201).json(post)
 
     } catch (error) {
-        console.error(error)
+        logger.error(error)
         res.status(500).json({ error: 'Internal Server Error' })
     }
 }
@@ -91,11 +92,11 @@ const updatePost = async (req, res) => {
             return
         }
 
-        console.log('Post updated successfully')
+        logger.info('Post updated successfully')
         res.status(200).json(post)
 
     } catch (error) {
-        console.error(error)
+        logger.error(error)
         res.status(500).json({ error: 'Internal Server Error' })
     }
 }
@@ -123,11 +124,11 @@ const deletePost = async (req, res) => {
             )
         }
 
-        console.log('Post deleted successfully')
+        logger.info('Post deleted successfully')
         res.status(200).json({ message: `(${post.title})post deleted sucessfully` })
 
     } catch (error) {
-        console.error(error)
+        logger.error(error)
         res.status(500).json({ error: 'Internal Server Error' })
     }
 }
@@ -152,7 +153,7 @@ const searchPosts = async (req, res) => {
         res.status(200).json(posts)
 
     } catch (error) {
-        console.error(error)
+        logger.error(error)
         res.status(500).json({ error: 'Internal Server Error' })
     }
 }

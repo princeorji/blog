@@ -11,7 +11,7 @@ const schema = new mongoose.Schema({
     timestamp: Date,
     state: String,
     read_count: { type: Number, default: 0 },
-    // reading_time: ,
+    reading_time: Number,
     body: String
 })
 

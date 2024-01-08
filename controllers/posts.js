@@ -1,6 +1,7 @@
 const logger = require('../config/logger')
 const Posts = require('../models/posts')
 const Users = require('../models/users')
+const { calculateReadingTime } = require('./utils')
 
 const getPosts = async (req, res) => {
     try {
@@ -57,8 +58,11 @@ const addPost = async (req, res) => {
     try {
         const { title, description, tags, state, body } = req.body
 
+        const readingTime = calculateReadingTime(body)
+
         const post = new Posts({
-            title, description, tags, state, body, author: req.user._id
+            title, description, tags, state, body, author: req.user._id,
+            reading_time: readingTime
         })
         await post.save()
 
@@ -80,7 +84,13 @@ const addPost = async (req, res) => {
 
 const updatePost = async (req, res) => {
     try {
-        const post = await Posts.findByIdAndUpdate(req.params.id, req.body, { new: true })
+        const postData = req.body
+
+        const readingTime = calculateReadingTime(postData.body)
+
+        postData.reading_time = readingTime
+
+        const post = await Posts.findByIdAndUpdate(req.params.id, postData, { new: true })
 
         if (!post) {
             res.status(404).json({ error: 'Post not found' })

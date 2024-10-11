@@ -12,9 +12,9 @@ const opts = {
 };
 
 passport.use(
-  new JwtStrategy(opts, function (jwt_payload, done) {
+  new JwtStrategy(opts, async (jwt_payload, done) => {
     try {
-      const user = User.findByPk(jwt_payload.id);
+      const user = await User.findByPk(jwt_payload.id);
       if (user) {
         return done(null, user);
       } else {

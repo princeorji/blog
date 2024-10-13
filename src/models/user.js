@@ -28,6 +28,12 @@ module.exports = (sequelize, DataTypes) => {
       verification_token: {
         type: DataTypes.STRING,
       },
+      reset_token: {
+        type: DataTypes.STRING,
+      },
+      reset_token_expires: {
+        type: DataTypes.DATE,
+      },
     },
     {
       tableName: 'users',

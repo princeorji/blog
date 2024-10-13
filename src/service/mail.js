@@ -32,3 +32,23 @@ module.exports.sendVerificationEmail = async (to, token) => {
     throw new Error('Could not send verification email');
   }
 };
+
+module.exports.forgotpasswordEmail = async (to, token) => {
+  const mailOptions = {
+    from: 'no-reply@blog.com',
+    to,
+    subject: 'Forgot Password',
+    html: `<p>Hello User,</p>
+
+    <p>We have received a request to reset your password. To proceed with the password reset, please copy the following token:</p>
+                <b>Reset Token: ${token}<b>`,
+  };
+
+  try {
+    const info = await transporter.sendMail(mailOptions);
+    console.log('Forgot password email sent:', info.response);
+  } catch (error) {
+    console.error('Error sending forgot password email:', error);
+    throw new Error('Could not send forgot password email');
+  }
+};

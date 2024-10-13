@@ -93,7 +93,7 @@ const remove = async (req, res, next) => {
       return res.status(404).json({ error: 'Post not found' });
     }
 
-    res.sendStatus(200);
+    res.status(200).json({ message: 'Post deleted successfully' });
   } catch (error) {
     next(error);
   }

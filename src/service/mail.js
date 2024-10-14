@@ -40,8 +40,11 @@ module.exports.forgotpasswordEmail = async (to, token) => {
     subject: 'Forgot Password',
     html: `<p>Hello User,</p>
 
-    <p>We have received a request to reset your password. To proceed with the password reset, please copy the following token:</p>
-                <b>Reset Token: ${token}<b>`,
+    <p>We have received a request to reset your password. Use the token below to complete the process</p>
+
+    <strong>${token}</strong>
+    
+    <p>If you didn't make this request, ignore this email</p>`,
   };
 
   try {

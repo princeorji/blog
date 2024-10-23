@@ -1,12 +1,12 @@
 const db = require('../config/database');
 const argon = require('argon2');
-const env = require('../utils/setEnv');
+const env = require('../config/index');
 const jwt = require('jsonwebtoken');
 const { Op } = require('sequelize');
 const crypto = require('crypto');
 const {
   sendVerificationEmail,
-  forgotpasswordEmail,
+  forgotPasswordMail,
 } = require('../service/mail');
 
 const User = db.users;
@@ -105,7 +105,7 @@ const forgotPassword = async (req, res, next) => {
     user.reset_token_expires = Date.now() + 3600000; // 1 hour
     await user.save();
 
-    await forgotpasswordEmail(user.email, token);
+    await forgotPasswordMail(user.email, token);
     res.status(200).json({ message: 'Password reset token sent to email.' });
   } catch (error) {
     next(error);

@@ -1,5 +1,5 @@
 const app = require('./app');
-const env = require('./utils/setEnv');
+const env = require('./config/index');
 
 require('./config/database');
 

@@ -1,5 +1,5 @@
 const nodemailer = require('nodemailer');
-const env = require('../utils/setEnv');
+const env = require('../config/index');
 
 const transporter = nodemailer.createTransport({
   host: 'sandbox.smtp.mailtrap.io',
@@ -33,15 +33,18 @@ module.exports.sendVerificationEmail = async (to, token) => {
   }
 };
 
-module.exports.forgotpasswordEmail = async (to, token) => {
+module.exports.forgotPasswordMail = async (to, token) => {
   const mailOptions = {
     from: 'no-reply@blog.com',
     to,
     subject: 'Forgot Password',
     html: `<p>Hello User,</p>
 
-    <p>We have received a request to reset your password. To proceed with the password reset, please copy the following token:</p>
-                <b>Reset Token: ${token}<b>`,
+    <p>We have received a request to reset your password. Use the token below to complete the process</p>
+
+    <strong>${token}</strong>
+    
+    <p>If you didn't make this request, ignore this email</p>`,
   };
 
   try {

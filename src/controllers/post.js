@@ -1,5 +1,5 @@
 const db = require('../config/database');
-const { calculateReadTime } = require('../utils/readTime');
+const calculateReadTime = require('../utils/calculateReadTime');
 
 const Post = db.posts;
 

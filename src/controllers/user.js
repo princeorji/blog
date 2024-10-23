@@ -9,7 +9,15 @@ const profile = async (req, res, next) => {
     const user = await User.findOne({
       where: { id: userId },
       attributes: {
-        exclude: ['password', 'is_verified', 'verification_token'],
+        exclude: [
+          'password',
+          'is_verified',
+          'verification_token',
+          'reset_token',
+          'reset_token_expires',
+          'createdAt',
+          'updatedAt',
+        ],
       },
     });
 

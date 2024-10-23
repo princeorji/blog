@@ -1,5 +1,5 @@
 const { Sequelize, DataTypes } = require('sequelize');
-const env = require('../utils/setEnv');
+const env = require('./index');
 
 const sequelize = new Sequelize(env.DATABASE);
 
